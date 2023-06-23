@@ -26,12 +26,6 @@
           <span class="fs-4">Новости</span>
       </a>
 
-      <ul class="nav nav-pills">
-        <li class="nav-item"><a href="<?= \yii\helpers\Url::to('site/login') ?>" class="nav-link active" aria-current="page">Для администратора</a></li>
-      </ul>
-    </header>
-  </div>
-
     <?= $content ?>
 
 <?php $this->endBody() ?>

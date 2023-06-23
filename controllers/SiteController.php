@@ -2,14 +2,22 @@
 
 namespace app\controllers;
 
+use app\models\CategoriForm;
 use app\models\Kategori;
+use app\models\LoginTable;
+use app\models\News;
+use app\models\Users;
+use app\models\UsersForm;
+use http\Url;
 use Yii;
+use yii\db\Query;
+use yii\debug\models\search\User;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
-use app\models\ContactForm;
+use function PHPUnit\Framework\identicalTo;
 
 class SiteController extends Controller
 {
@@ -64,7 +72,13 @@ class SiteController extends Controller
     {
         $select = Kategori::find()->asArray()->all();
 
-        return $this->render('index',compact('select'));
+        $news_row = (new Query())
+            ->select(['news.*','kategori.nasvanie'])
+            ->from('news')
+            ->innerJoin('kategori','news.id_kategori = kategori.id')
+            ->all();
+
+        return $this->render(\yii\helpers\Url::to('index'),['select'=>compact('select'),'news_row'=>compact('news_row')]);
     }
 
     /**
@@ -74,46 +88,68 @@ class SiteController extends Controller
      */
     public function actionLogin()
     {
-        return $this->render('login');
-    }
+        $model = new LoginForm();
 
-    /**
-     * Logout action.
-     *
-     * @return Response
-     */
-    public function actionLogout()
-    {
-        Yii::$app->user->logout();
+        $model->load(Yii::$app->request->post());
 
-        return $this->goHome();
-    }
+        if ($model->login !=null && $model->pass!=null){
 
-    /**
-     * Displays contact page.
-     *
-     * @return Response|string
-     */
-    public function actionContact()
-    {
-        $model = new ContactForm();
-        if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
-            Yii::$app->session->setFlash('contactFormSubmitted');
+            $pols = LoginTable::find()->asArray()->where(['login'=>$model->login,'pass'=>$model->pass])->all();
 
-            return $this->refresh();
+            if (count($pols) == 0)
+                return $this->render('login',['status'=>false,'model'=>$model]);
+
+            $select = Kategori::find()->asArray()->all();
+            $news_row =  (new Query())
+                ->select(['news.*','kategori.nasvanie'])
+                ->from('news')
+                ->innerJoin('kategori','news.id_kategori = kategori.id')
+                ->all();
+
+            return $this->render(\yii\helpers\Url::to('index'),['select'=>compact('select'),'pols'=>compact('pols'),'news_row'=>compact('news_row')]);
         }
-        return $this->render('contact', [
-            'model' => $model,
-        ]);
+
+
+
+//        if(!$model->load(Yii::$app->request->post()) && $model->login !=null && $model->pass != null){
+//            return $this->render('login',['status'=>false,'model'=>$model]);
+//        }
+//        else{
+//            $pols = LoginTableForm::find()->asArray()->where(['login'=>$model->login,'pass'=>$model->pass])->all();
+//
+//            return $this->render('index',compact('pols'));
+//        }
+
+        return $this->render('login',compact('model'));
     }
 
-    /**
-     * Displays about page.
-     *
-     * @return string
-     */
-    public function actionAbout()
-    {
-        return $this->render('about');
+
+    public function actionForm(){
+
+        $row = Yii::$app->request->post();
+
+        $select = Kategori::find()->asArray()->all();$select = Kategori::find()->asArray()->all();
+
+        if(isset($row['categori_name'])){
+
+        $news = (new Query())
+            ->select(['news.*','kategori.nasvanie'])
+            ->from('news')
+            ->innerJoin('kategori','news.id_kategori = kategori.id')
+            ->where('news.id_kategori = '.$row['categori_name'])
+            ->all();
+
+        return $this->render('index',['news_row'=>compact('news'),'select'=>compact('select')]);
+
+        } else {
+            $news = (new Query())
+            ->select(['news.*','kategori.nasvanie'])
+            ->from('news')
+            ->innerJoin('kategori','news.id_kategori = kategori.id')
+            ->all();
+
+            return $this->render('index',['news_row'=>compact('news'),'select'=>compact('select')]);
+        }
+
     }
 }

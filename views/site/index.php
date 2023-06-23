@@ -9,9 +9,9 @@
 
     <title><?= Html::encode($this->title) ?></title>
 
-    <?php if(!isset($pols)) { ?>
+    <?php if(!isset($pols) ) { ?>
         <ul class="nav nav-pills">
-           <li class="nav-item"><a href="<?= \yii\helpers\Url::to('site/login') ?>" class="nav-link active" aria-current="page">Для администратора</a></li>
+           <li class="nav-item"><a href="<?= \yii\helpers\Url::to('../site/login') ?>" class="nav-link active" aria-current="page">Для администратора</a></li>
         </ul>
         </header>
     </div>
@@ -63,7 +63,7 @@
                 <?php foreach($pols as $arr) { ?>
                     <li class="nav-item" style="margin-right: 10px"> <?= $arr[0]['login'] ?></li>
                 <?php } ?>
-                    <li class="nav-item"><a href="/" class="nav-link active" aria-current="page">Выход</a></li>
+                    <li class="nav-item"><a href="<?= Url::to(['out']) ?>" class="nav-link active" aria-current="page">Выход</a></li>
             </ul>
             </header>
         </div>

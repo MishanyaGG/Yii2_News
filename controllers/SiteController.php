@@ -68,10 +68,13 @@ class SiteController extends Controller
      *
      * @return string
      */
+    // ГЛАВНАЯ СТРАНИЦА
     public function actionIndex()
     {
+        // Получение из модели всех категорий
         $select = Kategori::find()->asArray()->all();
 
+        // Запрос на получение новоствей с соответствующей им категорий
         $news_row = (new Query())
             ->select(['news.*','kategori.nasvanie'])
             ->from('news')
@@ -86,20 +89,36 @@ class SiteController extends Controller
      *
      * @return Response|string
      */
+
+    // ЛОГИН
     public function actionLogin()
     {
+        // МОДЕЛЬ С ФОРМОЙ
         $model = new LoginForm();
 
+        // ПОЛУЧЕНИЕ POST ЗАПРОСА
         $model->load(Yii::$app->request->post());
 
+        // Условие на получение значений
         if ($model->login !=null && $model->pass!=null){
 
+            // Проверяем на соответствие логина и пароля с записью в бд
             $pols = LoginTable::find()->asArray()->where(['login'=>$model->login,'pass'=>$model->pass])->all();
 
+            // Запускаем
+            Yii::$app->session->open();
+
+            // Проверяем на количество записей в бд
             if (count($pols) == 0)
                 return $this->render('login',['status'=>false,'model'=>$model]);
 
+            // Записываем в суперглобальную переменную айдишник пользователя
+            $_SESSION['id'] = $pols[0]['id'];
+
+            // Получаем все категории из модели
             $select = Kategori::find()->asArray()->all();
+
+            // Запрос на получение новостей с соответствующей им категорий
             $news_row =  (new Query())
                 ->select(['news.*','kategori.nasvanie'])
                 ->from('news')
@@ -109,39 +128,43 @@ class SiteController extends Controller
             return $this->render(\yii\helpers\Url::to('index'),['select'=>compact('select'),'pols'=>compact('pols'),'news_row'=>compact('news_row')]);
         }
 
-
-
-//        if(!$model->load(Yii::$app->request->post()) && $model->login !=null && $model->pass != null){
-//            return $this->render('login',['status'=>false,'model'=>$model]);
-//        }
-//        else{
-//            $pols = LoginTableForm::find()->asArray()->where(['login'=>$model->login,'pass'=>$model->pass])->all();
-//
-//            return $this->render('index',compact('pols'));
-//        }
-
         return $this->render('login',compact('model'));
     }
 
 
     public function actionForm(){
 
+        // Получаем форму с категориями
         $row = Yii::$app->request->post();
 
-        $select = Kategori::find()->asArray()->all();$select = Kategori::find()->asArray()->all();
+        // Сразу же получаем все категории из модели
+        $select = Kategori::find()->asArray()->all();
 
+        // Проверяем на наличие авторизованного пользователя
+        if(isset($_SESSION['id']) || $_SESSION['id']!= [] || $_SESSION['id'] != null){
+            $user = LoginTable::find()->where(['id'=>$_SESSION['id']])->all();
+        } else
+            $user = null;
+
+        // Если была выбрана категория
         if(isset($row['categori_name'])){
 
-        $news = (new Query())
-            ->select(['news.*','kategori.nasvanie'])
-            ->from('news')
-            ->innerJoin('kategori','news.id_kategori = kategori.id')
-            ->where('news.id_kategori = '.$row['categori_name'])
-            ->all();
+            // Запрос на получение новоствей с соответствующей им категорий
+            $news = (new Query())
+                ->select(['news.*','kategori.nasvanie'])
+                ->from('news')
+                ->innerJoin('kategori','news.id_kategori = kategori.id')
+                ->where('news.id_kategori = '.$row['categori_name'])
+                ->all();
 
-        return $this->render('index',['news_row'=>compact('news'),'select'=>compact('select')]);
+        if($user == null)
+            return $this->render('index',['pols'=>$user,'news_row'=>compact('news'),'select'=>compact('select')]);
+        else
+            return $this->render('index',['pols'=>compact('user'),'news_row'=>compact('news'),'select'=>compact('select')]);
 
         } else {
+
+            // Запрос на получение новоствей с соответствующей им категорий
             $news = (new Query())
             ->select(['news.*','kategori.nasvanie'])
             ->from('news')
@@ -150,6 +173,13 @@ class SiteController extends Controller
 
             return $this->render('index',['news_row'=>compact('news'),'select'=>compact('select')]);
         }
+    }
 
+    // ВЫХОД ИЗ АККА
+    public function actionOut(){
+
+        $_SESSION['id'] = null;
+
+        return $this->redirect('index');
     }
 }

@@ -74,14 +74,24 @@ class SiteController extends Controller
         // Получение из модели всех категорий
         $select = Kategori::find()->asArray()->all();
 
+        // Проверяем на наличие авторизованного пользователя
+        if (isset($_SESSION['id'])) {
+            if ($_SESSION['id'] != [] || $_SESSION['id'] != null)
+                $user = LoginTable::find()->where(['id' => $_SESSION['id']])->all();
+        } else
+            $user = null;
+
         // Запрос на получение новоствей с соответствующей им категорий
         $news_row = (new Query())
-            ->select(['news.*','kategori.nasvanie'])
+            ->select(['news.*', 'kategori.nasvanie'])
             ->from('news')
-            ->innerJoin('kategori','news.id_kategori = kategori.id')
+            ->innerJoin('kategori', 'news.id_kategori = kategori.id')
             ->all();
 
-        return $this->render(\yii\helpers\Url::to('index'),['select'=>compact('select'),'news_row'=>compact('news_row')]);
+        if ($user == null)
+            return $this->render('index', ['pols' => $user, 'news_row' => compact('news_row'), 'select' => compact('select')]);
+        else
+            return $this->render('index', ['pols' => compact('user'), 'news_row' => compact('news_row'), 'select' => compact('select')]);
     }
 
     /**
@@ -100,17 +110,17 @@ class SiteController extends Controller
         $model->load(Yii::$app->request->post());
 
         // Условие на получение значений
-        if ($model->login !=null && $model->pass!=null){
+        if ($model->login != null && $model->pass != null) {
 
             // Проверяем на соответствие логина и пароля с записью в бд
-            $pols = LoginTable::find()->asArray()->where(['login'=>$model->login,'pass'=>$model->pass])->all();
+            $pols = LoginTable::find()->asArray()->where(['login' => $model->login, 'pass' => $model->pass])->all();
 
             // Запускаем
             Yii::$app->session->open();
 
             // Проверяем на количество записей в бд
             if (count($pols) == 0)
-                return $this->render('login',['status'=>false,'model'=>$model]);
+                return $this->render('login', ['status' => false, 'model' => $model]);
 
             // Записываем в суперглобальную переменную айдишник пользователя
             $_SESSION['id'] = $pols[0]['id'];
@@ -120,19 +130,20 @@ class SiteController extends Controller
 
             // Запрос на получение новостей с соответствующей им категорий
             $news_row =  (new Query())
-                ->select(['news.*','kategori.nasvanie'])
+                ->select(['news.*', 'kategori.nasvanie'])
                 ->from('news')
-                ->innerJoin('kategori','news.id_kategori = kategori.id')
+                ->innerJoin('kategori', 'news.id_kategori = kategori.id')
                 ->all();
 
-            return $this->render(\yii\helpers\Url::to('index'),['select'=>compact('select'),'pols'=>compact('pols'),'news_row'=>compact('news_row')]);
+            return $this->render(\yii\helpers\Url::to('index'), ['select' => compact('select'), 'pols' => compact('pols'), 'news_row' => compact('news_row')]);
         }
 
-        return $this->render('login',compact('model'));
+        return $this->render('login', compact('model'));
     }
 
-
-    public function actionForm(){
+    // Обработка фильтрации новостей
+    public function actionForm()
+    {
 
         // Получаем форму с категориями
         $row = Yii::$app->request->post();
@@ -141,42 +152,73 @@ class SiteController extends Controller
         $select = Kategori::find()->asArray()->all();
 
         // Проверяем на наличие авторизованного пользователя
-        if(isset($_SESSION['id']) || $_SESSION['id']!= [] || $_SESSION['id'] != null){
-            $user = LoginTable::find()->where(['id'=>$_SESSION['id']])->all();
+        if (isset($_SESSION['id'])) {
+            if ($_SESSION['id'] != [] || $_SESSION['id'] != null) {
+                $user = LoginTable::find()->where(['id' => $_SESSION['id']])->all();
+            }
         } else
             $user = null;
 
         // Если была выбрана категория
-        if(isset($row['categori_name'])){
+        if (isset($row['categori_name'])) {
 
             // Запрос на получение новоствей с соответствующей им категорий
             $news = (new Query())
-                ->select(['news.*','kategori.nasvanie'])
+                ->select(['news.*', 'kategori.nasvanie'])
                 ->from('news')
-                ->innerJoin('kategori','news.id_kategori = kategori.id')
-                ->where('news.id_kategori = '.$row['categori_name'])
+                ->innerJoin('kategori', 'news.id_kategori = kategori.id')
+                ->where('news.id_kategori = ' . $row['categori_name'])
                 ->all();
 
-        if($user == null)
-            return $this->render('index',['pols'=>$user,'news_row'=>compact('news'),'select'=>compact('select')]);
-        else
-            return $this->render('index',['pols'=>compact('user'),'news_row'=>compact('news'),'select'=>compact('select')]);
-
+            if ($user == null)
+                return $this->render('index', ['pols' => $user, 'news_row' => compact('news'), 'select' => compact('select')]);
+            else
+                return $this->render('index', ['pols' => compact('user'), 'news_row' => compact('news'), 'select' => compact('select')]);
         } else {
 
             // Запрос на получение новоствей с соответствующей им категорий
             $news = (new Query())
-            ->select(['news.*','kategori.nasvanie'])
-            ->from('news')
-            ->innerJoin('kategori','news.id_kategori = kategori.id')
-            ->all();
+                ->select(['news.*', 'kategori.nasvanie'])
+                ->from('news')
+                ->innerJoin('kategori', 'news.id_kategori = kategori.id')
+                ->all();
 
-            return $this->render('index',['news_row'=>compact('news'),'select'=>compact('select')]);
+            if ($user == null)
+                return $this->render('index', ['pols' => compact('user'), 'news_row' => compact('news'), 'select' => compact('select')]);
+            else
+                return $this->render('index', ['pols' => compact('user'), 'news_row' => compact('news'), 'select' => compact('select')]);
         }
     }
 
+    public function actionInfo()
+    {
+        $rq = Yii::$app->request->post();
+
+        // Запрос на получение новоствей с соответствующей им категорий
+        $select = (new Query())
+            ->select(['news.*', 'kategori.nasvanie'])
+            ->from('news')
+            ->innerJoin('kategori', 'news.id_kategori = kategori.id')
+            ->where(['news.id' => $rq['id_news']])
+            ->all();
+
+        // Проверяем на наличие авторизованного пользователя
+        if (isset($_SESSION['id'])) {
+            if ($_SESSION['id'] != [] || $_SESSION['id'] != null) {
+                $user = LoginTable::find()->where(['id' => $_SESSION['id']])->all();
+            }
+        } else
+            $user = null;
+
+        if ($user == null)
+            return $this->render('info', ['info' => compact('select')]);
+        else
+            return $this->render('info', ['pols' => compact('user'), 'info' => compact('select')]);
+    }
+
     // ВЫХОД ИЗ АККА
-    public function actionOut(){
+    public function actionOut()
+    {
 
         $_SESSION['id'] = null;
 

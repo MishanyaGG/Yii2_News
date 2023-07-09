@@ -233,6 +233,7 @@ class SiteController extends Controller
             $news->sagolovok = $post['sagolovok'];
             $news->id_kategori = $post['kategory'];
             $news->info_news = $post['info'];
+            $news->date = date('Y-m-d');
 
             $news->save();
 

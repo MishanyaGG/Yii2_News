@@ -47,7 +47,7 @@ $this->title = 'Главная страница';
     <div class="row g-4 py-5">
         <div class="feature col">
             <h3 class="fs-2"><?= $news[$i]['sagolovok'] ?></h3>
-            <p style="color: green;"><?= $news[$i]['nasvanie'] ?></p>
+            <p style="color: green;"><?= $news[$i]['nasvanie'] ?></p> <p>Дата подачи <?= $news[$i]['date'] ?></p>
             <p><?= $news[$i]['info_news'] ?></p>
 
             <!-- Переход на страницу Подробная информация -->
@@ -60,7 +60,7 @@ $this->title = 'Главная страница';
     <?php } else { ?>
         <div class="feature col">
             <h3 class="fs-2"><?= $news[$i]['sagolovok'] ?></h3>
-            <p style="color: green;"><?= $news[$i]['nasvanie'] ?></p>
+            <p style="color: green;"><?= $news[$i]['nasvanie'] ?></p> <p>Дата подачи <?= $news[$i]['date'] ?></p>
             <p><?= $news[$i]['info_news'] ?></p>
 
             <!-- Переход на страницу Подробная информация -->
@@ -109,7 +109,7 @@ $this->title = 'Главная страница';
                     <div class="row g-4 py-5">
                         <div class="feature col">
                             <h3 class="fs-2"><?= $news[$i]['sagolovok'] ?></h3>
-                            <p style="color: green;"><?= $news[$i]['nasvanie'] ?></p>
+                            <p style="color: green;"><?= $news[$i]['nasvanie'] ?></p> <p>Дата подачи <?= $news[$i]['date'] ?></p>
                             <p><?= $news[$i]['info_news'] ?></p>
 
                             <div style="margin: 5px">
@@ -140,7 +140,7 @@ $this->title = 'Главная страница';
                 <?php } else { ?>
                     <div class="feature col">
                         <h3 class="fs-2"><?= $news[$i]['sagolovok'] ?></h3>
-                        <p style="color: green;"><?= $news[$i]['nasvanie'] ?></p>
+                        <p style="color: green;"><?= $news[$i]['nasvanie'] ?></p> <p>Дата подачи <?= $news[$i]['date'] ?></p>
                         <p><?= $news[$i]['info_news'] ?></p>
 
                         <div style="margin: 5px">

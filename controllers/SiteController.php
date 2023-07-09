@@ -10,6 +10,7 @@ use app\models\Users;
 use app\models\UsersForm;
 use http\Url;
 use Yii;
+use yii\db\Exception;
 use yii\db\Query;
 use yii\debug\models\search\User;
 use yii\filters\AccessControl;
@@ -236,9 +237,32 @@ class SiteController extends Controller
             $news->save();
 
             return $this->redirect('index');
-
         }
 
+    }
+
+    public function actionRead_news(){
+        $rq = Yii::$app->request->post();
+
+        if(count($rq) == 2){
+            $kategory = Kategori::find()->all();
+
+            $user = LoginTable::find()->where(['id' => $_SESSION['id']])->all();
+
+            $news = News::find()->where(['id'=>$rq['id_news']])->all();
+
+            return $this->render('read_news',['kategory'=>compact('kategory'),'pols'=>compact('user'),'news'=>compact('news')]);
+        } else{
+            $news = News::findOne($rq['id_news']);
+
+            $news->sagolovok = $rq['sagolovok'];
+            $news->id_kategori = $rq['kategory'];
+            $news->info_news = $rq['info'];
+
+            $news->update();
+
+            $this->redirect('index');
+        }
     }
 
     // ВЫХОД ИЗ АККА

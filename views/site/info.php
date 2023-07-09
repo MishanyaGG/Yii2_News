@@ -21,7 +21,7 @@ foreach ($info as $info) {
     </header>
     </div>
 
-    <div style="margin-left: 30%">
+    <div style="margin-left: 3%">
         <?php foreach ($info as $info) { ?>
         <h1><?= $info['sagolovok'] ?></h1>
         <p style="color: green;"><?= $info['nasvanie'] ?></p>

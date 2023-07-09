@@ -112,11 +112,21 @@ $this->title = 'Главная страница';
                             <p style="color: green;"><?= $news[$i]['nasvanie'] ?></p>
                             <p><?= $news[$i]['info_news'] ?></p>
 
-                            <!-- Переход на страницу Подробная информация -->
-                            <?= $form = Html::beginForm(['site/info', 'post']) ?>
-                                <input type="hidden" name="id_news" value="<?= $news[$i]['id'] ?>">
-                                <button class="btn btn-primary" type="submit">Подробнее</button>
-                            <?= Html::endForm() ?>
+                            <div style="margin: 5px">
+                                <!-- Переход на страницу Подробная информация -->
+                                <?= $form = Html::beginForm(['site/info', 'post']) ?>
+                                    <input type="hidden" name="id_news" value="<?= $news[$i]['id'] ?>">
+                                    <button class="btn btn-primary" type="submit">Подробнее</button>
+                                <?= Html::endForm() ?>
+                            </div>
+
+                            <div style="margin: 5px">
+                                <!-- Переход на страницу редактирования страницы -->
+                                <?= $form = Html::beginForm(['site/read_news', 'post']) ?>
+                                    <input type="hidden" name="id_news" value="<?= $news[$i]['id'] ?>">
+                                    <button class="btn btn-secondary" type="submit">Изменить новость</button>
+                                <?= Html::endForm() ?>
+                            </div>
 
                         </div>
                 <?php } else { ?>
@@ -125,11 +135,22 @@ $this->title = 'Главная страница';
                         <p style="color: green;"><?= $news[$i]['nasvanie'] ?></p>
                         <p><?= $news[$i]['info_news'] ?></p>
 
-                        <!-- Переход на страницу Подробная информация -->
-                        <?= $form = Html::beginForm(['site/info', 'post']) ?>
-                            <input type="hidden" name="id_news" value="<?= $news[$i]['id'] ?>">
-                            <button class="btn btn-primary" type="submit">Подробнее</button>
-                        <?= Html::endForm() ?>
+                        <div style="margin: 5px">
+                            <!-- Переход на страницу Подробная информация -->
+                            <?= $form = Html::beginForm(['site/info', 'post']) ?>
+                                <input type="hidden" name="id_news" value="<?= $news[$i]['id'] ?>">
+                                <button class="btn btn-primary" type="submit">Подробнее</button>
+                            <?= Html::endForm() ?>
+                        </div>
+
+                        <div style="margin: 5px">
+                            <!-- Переход на страницу редактирования страницы -->
+                            <?= $form = Html::beginForm(['site/read_news', 'post']) ?>
+                                <input type="hidden" name="id_news" value="<?= $news[$i]['id'] ?>">
+                                <button class="btn btn-secondary" type="submit">Изменить новость</button>
+                            <?= Html::endForm() ?>
+                        </div>
+
 
                     </div>
                 <?php } ?>

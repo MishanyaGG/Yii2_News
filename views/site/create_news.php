@@ -35,4 +35,4 @@ $this->title = 'Добавление новостей';
         <button class="btn btn-success" type="submit">Создать</button>
     </div>
 
-<?= Html::endForm() ?>
+    <?= Html::endForm() ?>

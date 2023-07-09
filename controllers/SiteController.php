@@ -216,6 +216,31 @@ class SiteController extends Controller
             return $this->render('info', ['pols' => compact('user'), 'info' => compact('select')]);
     }
 
+    public function actionCreate_news(){
+
+        $post = Yii::$app->request->post();
+
+        if ($post == []){
+            $kategory = Kategori::find()->all();
+
+            $user = LoginTable::find()->where(['id' => $_SESSION['id']])->all();
+
+            return $this->render('create_news',['kategory'=>compact('kategory'),'pols'=>compact('user')]);
+        } else {
+            $news = new News;
+
+            $news->sagolovok = $post['sagolovok'];
+            $news->id_kategori = $post['kategory'];
+            $news->info_news = $post['info'];
+
+            $news->save();
+
+            return $this->redirect('index');
+
+        }
+
+    }
+
     // ВЫХОД ИЗ АККА
     public function actionOut()
     {

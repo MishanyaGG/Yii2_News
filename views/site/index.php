@@ -53,7 +53,7 @@ $this->title = 'Главная страница';
             <!-- Переход на страницу Подробная информация -->
             <?= $form = Html::beginForm(['site/info', 'post']) ?>
             <input type="hidden" name="id_news" value="<?= $news[$i]['id'] ?>">
-            <a class="icon-link"><button type="submit">Подробнее</button></a>
+            <button class="btn btn-primary" type="submit">Подробнее</button>
             <?= Html::endForm() ?>
 
         </div>
@@ -66,7 +66,7 @@ $this->title = 'Главная страница';
             <!-- Переход на страницу Подробная информация -->
             <?= $form = Html::beginForm(['site/info', 'post']) ?>
             <input type="hidden" name="id_news" value="<?= $news[$i]['id'] ?>">
-            <a class="icon-link"><button type="submit">Подробнее</button></a>
+            <button class="btn btn-primary" type="submit">Подробнее</button>
             <?= Html::endForm() ?>
 
         </div>
@@ -76,6 +76,7 @@ $this->title = 'Главная страница';
     </div>
 <?php } else { ?>
     <ul class="nav nav-pills">
+        <a href="<?= Url::to(['create_news']) ?>"><button type="button" style="margin-right: 20px" class="btn btn-success">Добавить новость</button></a>
         <?php foreach ($pols as $arr) { ?>
             <li class="nav-item" style="margin-right: 10px"> <?= $arr[0]['login'] ?></li>
         <?php } ?>
@@ -103,36 +104,36 @@ $this->title = 'Главная страница';
     <div class="row g-4 py-5 ">
         <?php foreach ($news_row as $news) { ?>
             <?php for ($i = 0; $i < count($news); $i++) { ?>
-                <?php if ($i / 3 == 1) { ?>
-    </div>
-    <div class="row g-4 py-5">
-        <div class="feature col">
-            <h3 class="fs-2"><?= $news[$i]['sagolovok'] ?></h3>
-            <p style="color: green;"><?= $news[$i]['nasvanie'] ?></p>
-            <p><?= $news[$i]['info_news'] ?></p>
+                <?php if ($i / 3 == 1 || $i % 3 == 0) { ?>
+                    </div>
+                    <div class="row g-4 py-5">
+                        <div class="feature col">
+                            <h3 class="fs-2"><?= $news[$i]['sagolovok'] ?></h3>
+                            <p style="color: green;"><?= $news[$i]['nasvanie'] ?></p>
+                            <p><?= $news[$i]['info_news'] ?></p>
 
-            <!-- Переход на страницу Подробная информация -->
-            <?= $form = Html::beginForm(['site/info', 'post']) ?>
-            <input type="hidden" name="id_news" value="<?= $news[$i]['id'] ?>">
-            <a class="icon-link"><button type="submit">Подробнее</button></a>
-            <?= Html::endForm() ?>
+                            <!-- Переход на страницу Подробная информация -->
+                            <?= $form = Html::beginForm(['site/info', 'post']) ?>
+                                <input type="hidden" name="id_news" value="<?= $news[$i]['id'] ?>">
+                                <button class="btn btn-primary" type="submit">Подробнее</button>
+                            <?= Html::endForm() ?>
 
-        </div>
-    <?php } else { ?>
-        <div class="feature col">
-            <h3 class="fs-2"><?= $news[$i]['sagolovok'] ?></h3>
-            <p style="color: green;"><?= $news[$i]['nasvanie'] ?></p>
-            <p><?= $news[$i]['info_news'] ?></p>
+                        </div>
+                <?php } else { ?>
+                    <div class="feature col">
+                        <h3 class="fs-2"><?= $news[$i]['sagolovok'] ?></h3>
+                        <p style="color: green;"><?= $news[$i]['nasvanie'] ?></p>
+                        <p><?= $news[$i]['info_news'] ?></p>
 
-            <!-- Переход на страницу Подробная информация -->
-            <?= $form = Html::beginForm(['site/info', 'post']) ?>
-            <input type="hidden" name="id_news" value="<?= $news[$i]['id'] ?>">
-            <a class="icon-link"><button type="submit">Подробнее</button></a>
-            <?= Html::endForm() ?>
+                        <!-- Переход на страницу Подробная информация -->
+                        <?= $form = Html::beginForm(['site/info', 'post']) ?>
+                            <input type="hidden" name="id_news" value="<?= $news[$i]['id'] ?>">
+                            <button class="btn btn-primary" type="submit">Подробнее</button>
+                        <?= Html::endForm() ?>
 
-        </div>
-    <?php } ?>
-<?php } ?>
-<?php } ?>
+                    </div>
+                <?php } ?>
+            <?php } ?>
+        <?php } ?>
     </div>
 <?php } ?>

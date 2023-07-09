@@ -21,11 +21,13 @@ foreach ($info as $info) {
     </header>
     </div>
 
-    <?php foreach ($info as $info) { ?>
+    <div style="margin-left: 30%">
+        <?php foreach ($info as $info) { ?>
         <h1><?= $info['sagolovok'] ?></h1>
         <p style="color: green;"><?= $info['nasvanie'] ?></p>
         <p><?= $info['info_news'] ?></p>
     <?php } ?>
+    </div>
 
     <!-- Если вошли в аккаунт -->
 <?php } else { ?>

@@ -72,6 +72,7 @@ class SiteController extends Controller
     // ГЛАВНАЯ СТРАНИЦА
     public function actionIndex()
     {
+
         // Получение из модели всех категорий
         $select = Kategori::find()->asArray()->all();
 
@@ -89,6 +90,7 @@ class SiteController extends Controller
             ->innerJoin('kategori', 'news.id_kategori = kategori.id')
             ->all();
 
+        // Если зашел обычный пользователь
         if ($user == null)
             return $this->render('index', ['pols' => $user, 'news_row' => compact('news_row'), 'select' => compact('select')]);
         else
@@ -171,6 +173,7 @@ class SiteController extends Controller
                 ->where('news.id_kategori = ' . $row['categori_name'])
                 ->all();
 
+            // Если зашел обычный пользователь
             if ($user == null)
                 return $this->render('index', ['pols' => $user, 'news_row' => compact('news'), 'select' => compact('select')]);
             else
@@ -184,6 +187,7 @@ class SiteController extends Controller
                 ->innerJoin('kategori', 'news.id_kategori = kategori.id')
                 ->all();
 
+            // Если зашел обычный пользователь
             if ($user == null)
                 return $this->render('index', ['pols' => compact('user'), 'news_row' => compact('news'), 'select' => compact('select')]);
             else
@@ -193,6 +197,8 @@ class SiteController extends Controller
 
     public function actionInfo()
     {
+
+        // Получаем значения из представления формы
         $rq = Yii::$app->request->post();
 
         // Запрос на получение новоствей с соответствующей им категорий
@@ -217,24 +223,34 @@ class SiteController extends Controller
             return $this->render('info', ['pols' => compact('user'), 'info' => compact('select')]);
     }
 
+    // ДОБАВЛЕНИЕ НОВОЙ НОВОСТИ
     public function actionCreate_news(){
 
+        // Получаем значения из представления формы
         $post = Yii::$app->request->post();
 
+        // Если не POST запрос
         if ($post == []){
+
+            // Получаем значения из модели
             $kategory = Kategori::find()->all();
 
+            // Получаем значения из модели (пользователя)
             $user = LoginTable::find()->where(['id' => $_SESSION['id']])->all();
 
             return $this->render('create_news',['kategory'=>compact('kategory'),'pols'=>compact('user')]);
         } else {
+
+            // Инициализируем экземпляр класса
             $news = new News;
 
+            // Записываем значения
             $news->sagolovok = $post['sagolovok'];
             $news->id_kategori = $post['kategory'];
             $news->info_news = $post['info'];
             $news->date = date('Y-m-d');
 
+            // Производим запись в бд
             $news->save();
 
             return $this->redirect('index');
@@ -242,33 +258,94 @@ class SiteController extends Controller
 
     }
 
+    // ИЗМЕНЕНИЕ НОВОСТИ
     public function actionRead_news(){
+
+        // Получаем значения из представления формы
         $rq = Yii::$app->request->post();
 
+        // Если полученных данных из представления формы равно 2
         if(count($rq) == 2){
+
+            // Получаем значения из модели
             $kategory = Kategori::find()->all();
 
+            // Получаем значения из модели (пользователя)
             $user = LoginTable::find()->where(['id' => $_SESSION['id']])->all();
 
+            // Получаем значения из модели (новость)
             $news = News::find()->where(['id'=>$rq['id_news']])->all();
 
             return $this->render('read_news',['kategory'=>compact('kategory'),'pols'=>compact('user'),'news'=>compact('news')]);
         } else{
+
+            // Получаем значения из модели (новость)
             $news = News::findOne($rq['id_news']);
 
+            // Записываем значения
             $news->sagolovok = $rq['sagolovok'];
             $news->id_kategori = $rq['kategory'];
             $news->info_news = $rq['info'];
 
+            // Изменяем в бд
             $news->update();
 
             $this->redirect('index');
         }
     }
 
-    public function actionDel_news(){
+    // СОЗДАНИЕ КАТЕГОРИИ
+    public function actionCreate_kat(){
+
+        // Получаем значения из представления формы
         $rq = Yii::$app->request->post();
 
+        // Инициализируем экземпляр класса
+        $kategori = new Kategori;
+
+        // Записываем значения
+        $kategori->nasvanie = $rq['kategori'];
+
+        //Записываем в базу
+        $kategori->save();
+
+        return $this->redirect('index');
+    }
+
+    public function actionEdit_kat(){
+
+        // Получаем значения из представления формы
+        $rq = Yii::$app->request->post();
+
+        // Получаем значения из модели (категорию)
+        $kategori = Kategori::findOne($rq['categori_name']);
+
+        // Записываем значения
+        $kategori->nasvanie = $rq['edit_kat'];
+
+        // Обновляем значение в бд
+        $kategori->update();
+
+        return $this->redirect('index');
+    }
+
+    // УДАЛЕНИЕ КАТЕГОРИИ
+    public function actionDel_kat(){
+        // Получаем значения из представления формы
+        $rq = Yii::$app->request->post();
+
+        // Получаем значения из модели (категория) и удаляем из бд
+        Kategori::findOne($rq['categori_name'])->delete();
+
+        return $this->redirect('index');
+    }
+
+    // УДАЛЕНИЕ НОВОСТИ
+    public function actionDel_news(){
+        // Получаем значения из представления формы
+        $rq = Yii::$app->request->post();
+
+        // Получаем значения из модели (новость) и удаляем из бд
         News::findOne($rq['id_news'])->delete();
 
         return $this->redirect('index');
@@ -277,7 +354,6 @@ class SiteController extends Controller
     // ВЫХОД ИЗ АККА
     public function actionOut()
     {
-
         $_SESSION['id'] = null;
 
         return $this->redirect('index');

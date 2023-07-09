@@ -265,6 +265,14 @@ class SiteController extends Controller
         }
     }
 
+    public function actionDel_news(){
+        $rq = Yii::$app->request->post();
+
+        News::findOne($rq['id_news'])->delete();
+
+        return $this->redirect('index');
+    }
+
     // ВЫХОД ИЗ АККА
     public function actionOut()
     {

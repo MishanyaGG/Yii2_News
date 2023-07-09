@@ -128,6 +128,14 @@ $this->title = 'Главная страница';
                                 <?= Html::endForm() ?>
                             </div>
 
+                            <div style="margin: 5px">
+                                <!-- Удаление новости -->
+                                <?= $form = Html::beginForm(['site/read_news', 'post']) ?>
+                                    <input type="hidden" name="id_news" value="<?= $news[$i]['id'] ?>">
+                                    <button class="btn btn-danger" type="submit">Удалить новость</button>
+                                <?= Html::endForm() ?>
+                            </div>
+
                         </div>
                 <?php } else { ?>
                     <div class="feature col">
@@ -151,6 +159,13 @@ $this->title = 'Главная страница';
                             <?= Html::endForm() ?>
                         </div>
 
+                        <div style="margin: 5px">
+                            <!-- Удаление новости -->
+                            <?= $form = Html::beginForm(['site/del_news', 'post']) ?>
+                                <input type="hidden" name="id_news" value="<?= $news[$i]['id'] ?>">
+                                <button class="btn btn-danger" type="submit">Удалить новость</button>
+                            <?= Html::endForm() ?>
+                        </div>
 
                     </div>
                 <?php } ?>

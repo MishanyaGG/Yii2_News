@@ -92,12 +92,27 @@ class SiteController extends Controller
 //            ->orderBy('news.date DESC')
 //            ->all();
 
-        $news = News::find();
-        $pages = new Pagination(['totalCount'=>$news->count(),'pageSize'=>3]);
-        $posts = $news->offset($pages->offset)
-            ->limit($pages->limit)
-            ->orderBy('date desc')
-            ->all();
+        $rq = Yii::$app->request->post();
+
+        if($rq == [] || count($rq) == 1 || $rq['filtr_news'] == 'new'){
+
+            $news = News::find();
+            $pages = new Pagination(['totalCount'=>$news->count(),'pageSize'=>3]);
+            $posts = $news->offset($pages->offset)
+                ->limit($pages->limit)
+                ->orderBy('date desc')
+                ->all();
+
+        } else {
+            $news = News::find();
+            $pages = new Pagination(['totalCount'=>$news->count(),'pageSize'=>3]);
+            $posts = $news->offset($pages->offset)
+                ->limit($pages->limit)
+                ->orderBy('date')
+                ->all();
+        }
+
+
 
         // Если зашел обычный пользователь 'news_row' => compact('news_row')
         if ($user == null)

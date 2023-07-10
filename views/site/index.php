@@ -39,6 +39,21 @@ $this->title = 'Главная страница';
         <?= Html::endForm() ?>
     </div>
 
+    <div style="margin-left: 20px">
+
+        <?= Html::beginForm(['site/index','post']) ?>
+
+            <select name="filtr_news" class="form-select" style="width: 30%">
+                <option disabled selected>Фильтрация новостей</option>
+                <option value="new">C начала актуальные</option>
+                <option value="old">С начала поздние</option>
+            </select>
+
+            <button style="margin-top: 10px" class="btn btn-primary" type="submit">Отфильтровать</button>
+
+        <?= Html::endForm() ?>
+    </div>
+
     <div class="row g-4 py-5 ">
         <!-- Вывод всех новостей -->
         <?php foreach ($news_row as $news) { ?>
@@ -70,9 +85,11 @@ $this->title = 'Главная страница';
     <?php } ?>
     </div>
 
-    <?= \yii\widgets\LinkPager::widget([
-            'pagination'=>$pages,
-    ]); ?>
+    <div style="margin-left: 46%">
+            <?= \yii\widgets\LinkPager::widget([
+                'pagination'=>$pages,
+            ]); ?>
+        </div>
 <?php } else { ?>
     <ul class="nav nav-pills">
         <a href="<?= Url::to(['create_news']) ?>"><button type="button" style="margin-right: 20px" class="btn btn-success">Добавить новость</button></a>
@@ -161,6 +178,21 @@ $this->title = 'Главная страница';
         </div>
     </div>
 
+    <div style="margin-left: 20px">
+
+        <?= Html::beginForm(['site/index','post']) ?>
+
+            <select name="filtr_news" class="form-select" style="width: 30%">
+                <option disabled selected>Фильтрация новостей</option>
+                <option value="new">C начала актуальные</option>
+                <option value="old">С начала поздние</option>
+            </select>
+
+            <button style="margin-top: 10px" class="btn btn-primary" type="submit">Отфильтровать</button>
+
+        <?= Html::endForm() ?>
+    </div>
+
     <div class="row g-4 py-5 ">
         <?php foreach ($news_row as $news) { ?>
 
@@ -207,8 +239,10 @@ $this->title = 'Главная страница';
                 </div>
         <?php } ?>
     <?php } ?>
+        <div style="margin-left: 46%">
+            <?= \yii\widgets\LinkPager::widget([
+                'pagination'=>$pages,
+            ]); ?>
+        </div>
 <?php } ?>
     </div>
-  <?= \yii\widgets\LinkPager::widget([
-            'pagination'=>$pages,
-    ]); ?>

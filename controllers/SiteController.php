@@ -10,6 +10,7 @@ use app\models\Users;
 use app\models\UsersForm;
 use http\Url;
 use Yii;
+use yii\data\Pagination;
 use yii\db\Exception;
 use yii\db\Query;
 use yii\debug\models\search\User;
@@ -84,17 +85,25 @@ class SiteController extends Controller
             $user = null;
 
         // Запрос на получение новоствей с соответствующей им категорий
-        $news_row = (new Query())
-            ->select(['news.*', 'kategori.nasvanie'])
-            ->from('news')
-            ->innerJoin('kategori', 'news.id_kategori = kategori.id')
+//        $news_row = (new Query())
+//            ->select(['news.*', 'kategori.nasvanie'])
+//            ->from('news')
+//            ->innerJoin('kategori', 'news.id_kategori = kategori.id')
+//            ->orderBy('news.date DESC')
+//            ->all();
+
+        $news = News::find();
+        $pages = new Pagination(['totalCount'=>$news->count(),'pageSize'=>3]);
+        $posts = $news->offset($pages->offset)
+            ->limit($pages->limit)
+            ->orderBy('date desc')
             ->all();
 
-        // Если зашел обычный пользователь
+        // Если зашел обычный пользователь 'news_row' => compact('news_row')
         if ($user == null)
-            return $this->render('index', ['pols' => $user, 'news_row' => compact('news_row'), 'select' => compact('select')]);
+            return $this->render('index', ['pols' => $user,'news_row'=>compact('posts'),'pages'=>$pages, 'select' => compact('select')]);
         else
-            return $this->render('index', ['pols' => compact('user'), 'news_row' => compact('news_row'), 'select' => compact('select')]);
+            return $this->render('index', ['pols' => compact('user'), 'news_row'=>compact('posts'),'pages'=>$pages, 'select' => compact('select')]);
     }
 
     /**
@@ -132,13 +141,21 @@ class SiteController extends Controller
             $select = Kategori::find()->asArray()->all();
 
             // Запрос на получение новостей с соответствующей им категорий
-            $news_row =  (new Query())
-                ->select(['news.*', 'kategori.nasvanie'])
-                ->from('news')
-                ->innerJoin('kategori', 'news.id_kategori = kategori.id')
+//            $news_row =  (new Query())
+//                ->select(['news.*', 'kategori.nasvanie'])
+//                ->from('news')
+//                ->innerJoin('kategori', 'news.id_kategori = kategori.id')
+//                ->all();
+
+            $news = News::find();
+            $pages = new Pagination(['totalCount'=>$news->count(),'pageSize'=>3]);
+            $posts = $news->offset($pages->offset)
+                ->limit($pages->limit)
+                ->orderBy('date desc')
                 ->all();
 
-            return $this->render(\yii\helpers\Url::to('index'), ['select' => compact('select'), 'pols' => compact('pols'), 'news_row' => compact('news_row')]);
+            //return $this->render(\yii\helpers\Url::to('index'), ['select' => compact('select'), 'pols' => compact('pols'), 'news_row'=>compact('posts'),'pages'=>$pages]);
+            return $this->redirect('index');
         }
 
         return $this->render('login', compact('model'));
@@ -173,11 +190,18 @@ class SiteController extends Controller
                 ->where('news.id_kategori = ' . $row['categori_name'])
                 ->all();
 
+            $news = News::find()->where('news.id_kategori = '. $row['categori_name']);
+            $pages = new Pagination(['totalCount'=>$news->count(),'pageSize'=>3]);
+            $posts = $news->offset($pages->offset)
+                ->limit($pages->limit)
+                ->orderBy('date desc')
+                ->all();
+
             // Если зашел обычный пользователь
             if ($user == null)
-                return $this->render('index', ['pols' => $user, 'news_row' => compact('news'), 'select' => compact('select')]);
+                return $this->render('index', ['pols' => $user, 'news_row'=>compact('posts'),'pages'=>$pages, 'select' => compact('select')]);
             else
-                return $this->render('index', ['pols' => compact('user'), 'news_row' => compact('news'), 'select' => compact('select')]);
+                return $this->render('index', ['pols' => compact('user'), 'news_row'=>compact('posts'),'pages'=>$pages, 'select' => compact('select')]);
         } else {
 
             // Запрос на получение новоствей с соответствующей им категорий

@@ -42,38 +42,37 @@ $this->title = 'Главная страница';
     <div class="row g-4 py-5 ">
         <!-- Вывод всех новостей -->
         <?php foreach ($news_row as $news) { ?>
-            <?php for ($i = 0; $i < count($news); $i++) { ?>
-                <!-- Сделано, чтобы карточки новостей не выводились в одну строку (были ошибки при выводе относительно фронта) -->
-                <?php if ($i / 3 == 1) { ?>
-    </div>
-    <div class="row g-4 py-5">
-        <div class="feature col">
-            <h3 class="fs-2"><?= $news[$i]['sagolovok'] ?></h3>
-            <p style="color: green;"><?= $news[$i]['nasvanie'] ?></p> <p>Дата подачи <?= $news[$i]['date'] ?></p>
-            <p><?= $news[$i]['info_news'] ?></p>
 
-            <!-- Переход на страницу Подробная информация -->
-            <?= $form = Html::beginForm(['site/info', 'post']) ?>
-                <input type="hidden" name="id_news" value="<?= $news[$i]['id'] ?>">
-                <button class="btn btn-primary" type="submit">Подробнее</button>
-            <?= Html::endForm() ?>
-        </div>
-    <?php } else { ?>
-        <div class="feature col">
-            <h3 class="fs-2"><?= $news[$i]['sagolovok'] ?></h3>
-            <p style="color: green;"><?= $news[$i]['nasvanie'] ?></p> <p>Дата подачи <?= $news[$i]['date'] ?></p>
-            <p><?= $news[$i]['info_news'] ?></p>
-
-            <!-- Переход на страницу Подробная информация -->
-            <?= $form = Html::beginForm(['site/info', 'post']) ?>
-            <input type="hidden" name="id_news" value="<?= $news[$i]['id'] ?>">
-            <button class="btn btn-primary" type="submit">Подробнее</button>
-            <?= Html::endForm() ?>
-        </div>
+            <?php if (count($news) == 0) { ?>
+                <h3>Новости отсутствуют</h3>
             <?php } ?>
+
+            <?php for ($i = 0; $i < count($news); $i++) { ?>
+                    <div class="feature col">
+                        <h3 class="fs-2"><?= $news[$i]['sagolovok'] ?></h3>
+                        <?php foreach ($select as $row) { ?>
+                            <!-- Условие для переноса новостей на след. строку -->
+                            <?php for ($g = 0; $g < count($row); $g++) { ?>
+                                <?php if ($news[$i]['id_kategori']==$row[$g]['id']) {  ?>
+                                    <p style="color: green;"><?= $row[$g]['nasvanie'] ?></p> <p>Дата подачи <?= $news[$i]['date'] ?></p>
+                                <?php } ?>
+                            <?php } ?>
+                        <?php } ?>
+                        <p><?= $news[$i]['info_news'] ?></p>
+
+                        <!-- Переход на страницу Подробная информация -->
+                        <?= $form = Html::beginForm(['site/info', 'post']) ?>
+                            <input type="hidden" name="id_news" value="<?= $news[$i]['id'] ?>">
+                            <button class="btn btn-primary" type="submit">Подробнее</button>
+                        <?= Html::endForm() ?>
+                    </div>
         <?php } ?>
     <?php } ?>
     </div>
+
+    <?= \yii\widgets\LinkPager::widget([
+            'pagination'=>$pages,
+    ]); ?>
 <?php } else { ?>
     <ul class="nav nav-pills">
         <a href="<?= Url::to(['create_news']) ?>"><button type="button" style="margin-right: 20px" class="btn btn-success">Добавить новость</button></a>
@@ -159,84 +158,57 @@ $this->title = 'Главная страница';
 
                 </div>
             </div>
-
-
-
         </div>
     </div>
 
     <div class="row g-4 py-5 ">
         <?php foreach ($news_row as $news) { ?>
-            <?php if (count($news)==0) { ?>
-                <h3>Новости отсутствуют</h3>
-            <?php } else { ?>
-                <?php for ($i = 0; $i < count($news); $i++) { ?>
-                    <?php if ($i / 3 == 1 || $i % 3 == 0) { ?>
-                        </div>
-                        <div class="row g-4 py-5">
-                            <div class="feature col">
-                                <h3 class="fs-2"><?= $news[$i]['sagolovok'] ?></h3>
-                                <p style="color: green;"><?= $news[$i]['nasvanie'] ?></p> <p>Дата подачи <?= $news[$i]['date'] ?></p>
-                                <p><?= $news[$i]['info_news'] ?></p>
 
-                                <div style="margin: 5px">
-                                    <!-- Переход на страницу Подробная информация -->
-                                    <?= $form = Html::beginForm(['site/info', 'post']) ?>
-                                        <input type="hidden" name="id_news" value="<?= $news[$i]['id'] ?>">
-                                        <button class="btn btn-primary" type="submit">Подробнее</button>
-                                    <?= Html::endForm() ?>
-                                </div>
-
-                                <div style="margin: 5px">
-                                    <!-- Переход на страницу редактирования страницы -->
-                                    <?= $form = Html::beginForm(['site/read_news', 'post']) ?>
-                                        <input type="hidden" name="id_news" value="<?= $news[$i]['id'] ?>">
-                                        <button class="btn btn-secondary" type="submit">Изменить новость</button>
-                                    <?= Html::endForm() ?>
-                                </div>
-
-                                <div style="margin: 5px">
-                                    <!-- Удаление новости -->
-                                    <?= $form = Html::beginForm(['site/del_news', 'post']) ?>
-                                        <input type="hidden" name="id_news" value="<?= $news[$i]['id'] ?>">
-                                        <button class="btn btn-danger" type="submit">Удалить новость</button>
-                                    <?= Html::endForm() ?>
-                                </div>
-
-                            </div>
-                    <?php } else { ?>
-                        <div class="feature col">
-                            <h3 class="fs-2"><?= $news[$i]['sagolovok'] ?></h3>
-                            <p style="color: green;"><?= $news[$i]['nasvanie'] ?></p> <p>Дата подачи <?= $news[$i]['date'] ?></p>
-                            <p><?= $news[$i]['info_news'] ?></p>
-
-                            <div style="margin: 5px">
-                                <!-- Переход на страницу Подробная информация -->
-                                <?= $form = Html::beginForm(['site/info', 'post']) ?>
-                                    <input type="hidden" name="id_news" value="<?= $news[$i]['id'] ?>">
-                                    <button class="btn btn-primary" type="submit">Подробнее</button>
-                                <?= Html::endForm() ?>
-                            </div>
-
-                            <div style="margin: 5px">
-                                <!-- Переход на страницу редактирования страницы -->
-                                <?= $form = Html::beginForm(['site/read_news', 'post']) ?>
-                                    <input type="hidden" name="id_news" value="<?= $news[$i]['id'] ?>">
-                                    <button class="btn btn-secondary" type="submit">Изменить новость</button>
-                                <?= Html::endForm() ?>
-                            </div>
-
-                            <div style="margin: 5px">
-                                <!-- Удаление новости -->
-                                <?= $form = Html::beginForm(['site/del_news', 'post']) ?>
-                                    <input type="hidden" name="id_news" value="<?= $news[$i]['id'] ?>">
-                                    <button class="btn btn-danger" type="submit">Удалить новость</button>
-                                <?= Html::endForm() ?>
-                            </div>
-                        </div>
-                    <?php } ?>
-                <?php } ?>
-            <?php } ?>
+        <?php if (count($news) == 0) { ?>
+            <h3>Новости отсутствуют</h3>
         <?php } ?>
-    </div>
+            <?php for ($i = 0; $i < count($news); $i++) { ?>
+                <div class="feature col">
+                    <h3 class="fs-2"><?= $news[$i]['sagolovok'] ?></h3>
+                    <?php foreach ($select as $row) { ?>
+                        <!-- Условие для переноса новостей на след. строку -->
+                        <?php for ($g = 0; $g < count($row); $g++) { ?>
+                            <?php if ($news[$i]['id_kategori']==$row[$g]['id']) {  ?>
+                                <p style="color: green;"><?= $row[$g]['nasvanie'] ?></p> <p>Дата подачи <?= $news[$i]['date'] ?></p>
+                            <?php } ?>
+                        <?php } ?>
+                    <?php } ?>
+                    <p><?= $news[$i]['info_news'] ?></p>
+
+
+                    <div style="margin-left: 5px">
+                        <!-- Переход на страницу Подробная информация -->
+                        <?= $form = Html::beginForm(['site/info', 'post']) ?>
+                            <input type="hidden" name="id_news" value="<?= $news[$i]['id'] ?>">
+                            <button class="btn btn-primary" type="submit">Подробнее</button>
+                        <?= Html::endForm() ?>
+                    </div>
+
+                    <div style="margin: 5px">
+                        <!-- Переход на страницу редактирования страницы -->
+                        <?= $form = Html::beginForm(['site/read_news', 'post']) ?>
+                            <input type="hidden" name="id_news" value="<?= $news[$i]['id'] ?>">
+                            <button class="btn btn-secondary" type="submit">Изменить новость</button>
+                        <?= Html::endForm() ?>
+                    </div>
+
+                    <div style="margin: 5px">
+                        <!-- Удаление новости -->
+                        <?= $form = Html::beginForm(['site/del_news', 'post']) ?>
+                            <input type="hidden" name="id_news" value="<?= $news[$i]['id'] ?>">
+                            <button class="btn btn-danger" type="submit">Удалить новость</button>
+                        <?= Html::endForm() ?>
+                    </div>
+                </div>
+        <?php } ?>
+    <?php } ?>
 <?php } ?>
+    </div>
+  <?= \yii\widgets\LinkPager::widget([
+            'pagination'=>$pages,
+    ]); ?>

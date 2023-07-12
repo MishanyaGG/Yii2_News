@@ -41,7 +41,7 @@ class NewsController extends Controller
     {
 
         // Создаём новый экземпляр класса, необходимый для вывода значений в представлении
-        $dataProvider = new ActiveDataProvider([
+        $data_provider = new ActiveDataProvider([
             // Запрос
             'query' => News::find(),
 
@@ -73,7 +73,7 @@ class NewsController extends Controller
     public function actionOld()
     {
         // Создаём новый экземпляр класса, необходимый для вывода значений в представлении
-        $dataProvider = new ActiveDataProvider([
+        $data_provider = new ActiveDataProvider([
             // Запрос
             'query' => News::find(),
             // Параметры пагинации
@@ -153,7 +153,7 @@ class NewsController extends Controller
     public function actionUpdate($id)
     {
         // Создаём новый экземпляр класса, необходимый для вывода значений в представлении
-        $dataProvider = new ActiveDataProvider([
+        $data_provider = new ActiveDataProvider([
             'query'=>News::find()->where('id = '.$id)
         ]);
 
@@ -168,7 +168,7 @@ class NewsController extends Controller
         // Выводим представление и добавляем переменные для вывода в представлении
         return $this->render('update', [
             'model' => $model,
-            'dataProvider'=>$dataProvider
+            'dataProvider'=>$data_provider
         ]);
     }
 
@@ -200,7 +200,7 @@ class NewsController extends Controller
         $query = Yii::$app->request->post();
 
         // Создаём новый экземпляр класса, необходимый для вывода значений в представлении
-        $dataProvider = new ActiveDataProvider([
+        $data_provider = new ActiveDataProvider([
             'query' => News::find()->where(['id_categories'=>$query['id_categories']]),
             /*
             'pagination' => [
@@ -216,7 +216,7 @@ class NewsController extends Controller
 
         // Выводим представление и добавляем переменные для вывода в представлении
         return $this->render('index', [
-            'dataProvider' => $dataProvider,
+            'dataProvider' => $data_provider,
             'category'=>Categories::find()->asArray()->all()
         ]);
     }

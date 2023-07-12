@@ -1,82 +1,69 @@
-// Значения категорий
-var kat = document.getElementById('create_kat');
-// Кнопка при открытии формы добавления категории
-var btn_create = document.getElementById('create_btn_kat');
-// Кнопка для закрытия формы
-var btn_close = document.getElementById('btn_close');
 
-// Значения категорий
-var kat_del = document.getElementById('del_kat');
-// Кнопка при открытии формы удаления категории
-var btn_del = document.getElementById('del_btn_kat');
-// Кнопка для закрытия формы
-var btn_close_del = document.getElementById('btn_close_del');
+var listFilter = document.getElementById('listFilter');
 
-// Значения категорий
-var kat_edit = document.getElementById('edit_kat');
-// Кнопка при открытии формы изменения категории
-var btn_edit = document.getElementById('edit_btn_kat');
-// Кнопка для закрытия формы
-var btn_close_edit = document.getElementById('btn_close_edit');
+function onchangeSelectFilter(){
+    if (listFilter.value == 'new')
+        window.location.href = '/';
+    if (listFilter.value == 'old')
+        window.location.href = '../news/old';
+}
 
-// Значения основных категорий
-var kategori = document.getElementById('kategori');
 
-// Скрываем по умолчанию формы
-kat.style.display = 'none';
-kat_del.style.display = 'none';
-kat_edit.style.display = 'none';
+// Получаем кнопку с удалением категории
+var btnDelete = document.getElementById('btnDelete');
 
-// Открываем форму для добавления категории
-btn_create.addEventListener('click',function (){
-    kat.style.display = '';
-    btn_create.style.display = 'none';
-    btn_del.style.display = 'none';
-    kategori.style.display = 'none';
-    btn_edit.style.display = 'none';
-});
+// Записываем в переменную текст из кнопки, который по умолчанию
+var contentBtnDelete = btnDelete.textContent;
 
-// Закрываем форму для добавления категории
-btn_close.addEventListener('click',function (){
-    kat.style.display = 'none';
-    btn_create.style.display = '';
-    btn_del.style.display = '';
-    kategori.style.display = 'flex';
-    btn_edit.style.display = '';
-});
+// Записываем в переменную ссылку кнопки, который по умолчанию
+var hrefBtnDelete = btnDelete.href;
 
-// Открываем форму для удаления категории
-btn_del.addEventListener('click',function (){
-   kat_del.style.display = '';
-   btn_del.style.display = 'none';
-   btn_create.style.display = 'none';
-   kategori.style.display = 'none';
-   btn_edit.style.display = 'none';
-});
+// Что бы при запуске страницы корректно работала кнопка с удалением
+btnDelete.href = '/';
 
-// Закрываем форму для удаления категории
-btn_close_del.addEventListener('click',function (){
-    kat_del.style.display = 'none';
-    btn_del.style.display = '';
-    btn_create.style.display = '';
-    kategori.style.display = 'flex';
-    btn_edit.style.display = '';
-});
+// Получаем кнопку с изменением категории
+var btnUpdate = document.getElementById('btnUpdate');
 
-// Открываем форму для изменения категории
-btn_edit.addEventListener('click',function (){
-    kat_edit.style.display = '';
-    btn_create.style.display = 'none';
-    btn_del.style.display = 'none';
-    kategori.style.display = 'none';
-    btn_edit.style.display = 'none';
-});
+// Записываем в переменную текст из кнопки, который по умолчанию
+var contentBtnUpdate = btnUpdate.textContent;
 
-// Закрываем форму для изменения категории
-btn_close_edit.addEventListener('click',function (){
-    kat_edit.style.display = 'none';
-    btn_create.style.display = '';
-    btn_del.style.display = '';
-    kategori.style.display = 'flex';
-    btn_edit.style.display = '';
-})
+// Записываем в переменную ссылку кнопки, который по умолчанию
+var hrefbtnUpdate = btnUpdate.href;
+
+// Что бы при запуске страницы корректно работала кнопка с изменением
+btnUpdate.href = '/';
+
+// Получаем список категорий
+var categories = document.getElementById('id_categories');
+
+function onchancheCategory(){
+
+    // Записываем ссылку, которая по умолчанию была на кнопке
+    btnUpdate.href = hrefbtnUpdate;
+
+    // Записываем текст, который был по умолчанию на кнопке (необходим для обнуления значения)
+    btnUpdate.textContent = contentBtnUpdate;
+
+    // Записываем ссылку, которая по умолчанию была на кнопке
+    btnDelete.href = hrefBtnDelete;
+
+    // Записываем текст, который был по умолчанию на кнопке (необходим для обнуления значения)
+    btnDelete.textContent = contentBtnDelete;
+
+    // Получаем значение выбранного элемента
+    var value = categories.value;
+
+    // Получаем текст выбранного элемента
+    var text = categories.options[categories.selectedIndex].text;
+
+    // Добавляем к кнопке текст
+    btnUpdate.textContent += " ("+ text + ")";
+    // Изменяем ссылку кнопки
+    btnUpdate.href += "?id="+value;
+
+    // Добавляем к кнопке текст
+    btnDelete.textContent += " ("+ text + ")";
+
+    // Изменяем ссылку кнопки
+    btnDelete.href += "?id="+value;
+}

@@ -92,7 +92,7 @@ class NewsController extends Controller
 
         // Выводим представление и добавляем переменные для вывода в представлении
         return $this->render('index', [
-            'dataProvider' => $dataProvider,
+            'dataProvider' => $data_provider,
             'category'=>Categories::find()->asArray()->all()
         ]);
     }
